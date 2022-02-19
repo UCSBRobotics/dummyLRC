@@ -34,13 +34,22 @@ class NeuralNet:
     def forward_prop(self, iput):
         self.zs = []
         self.aus = []
+        count = 0
         for w, b in zip(self.weights, self.bs):
             print(w)
             print(iput)
-            
+
             z = np.matmul(w, iput) + b
-            print("done")
             self.zs.append(z)
-            iput = sigmoid(z)
-            self.aus.append(iput)
+            if count == len(self.weights) - 1:
+                iput = self.softmax(iput)
+            else:
+                iput = sigmoid(z)
+                self.aus.append(iput)
+            count+=1
         return iput
+
+    def loss(self, y, y_hat):
+        return -np.dot(y, np.log2(y_hat))
+    def softmax(self, iput):
+        return np.exp(iput) / np.sum(np.exp(iput))
